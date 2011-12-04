@@ -84,29 +84,28 @@ createbtree()
 	return (addr_t) createnode();
 }
 
-int
+/* XXX */
+void
 searchnode(
 	addr_t btree,
 	key_t key,
-	record_t **record, /* output */
+	struct bt_entry **entry, /* output */
 	struct bt_node **node /* output */
 )
 {
-	struct bt_node *n = getnode(btree);
-	int i, size;
+	int i;
 	addr_t addr;
-	struct bt_entry *entries;
-	
-	entries = n->entries;
-	size = n->size;
-	for (i = 0; i < size; i++) {
-		record_t *r = &(entries[i].record);
-		int cmp = compare(key, r);
+	struct bt_node *n = getnode(btree);
+	struct bt_entry *entries = n->entries;
+
+	for (i = 0; i < n->size; i++) {
+		struct bt_entry *e = &(entries[i]);
+		int cmp = compare(key, &(e->record));
 
 		if (cmp == 0) {
-			*record = r;
+			*entry = e;
 			*node = n;
-			return 0;
+			return;
 		}
 
 		if (cmp > 0) break;
@@ -119,13 +118,15 @@ searchnode(
 	}
 
 	if (addr == ADDR_NULL) {
-		*record = (record_t *) 0;
-		*node = (struct bt_node *) 0;
-		return -1;
+		*entry = (struct bt_entry *) 0;
+		*node = n;
+		return;
 	}
 
 	freenode(n);
-	return searchnode(addr, key, record, node);
+
+	searchnode(addr, key, entry, node);
+	return;
 }
 
 record_t *
@@ -134,13 +135,19 @@ search(
 	key_t key
 )
 {
-	record_t *record;
+	struct bt_entry *entry;
 	struct bt_node *node;
-	int result;
+	record_t *ret;
 
-	result = searchnode(btree, key, &record, &node);
-	if (result) return (record_t *) 0;
+	searchnode(btree, key, &entry, &node);
+	if (entry) {
+		ret = (record_t *) malloc(sizeof (record_t));
+		*ret = entry->record; /* memcopy */
+	} else {
+		ret = (record_t *) 0;
+	}
 
-	return record;
+	freenode(node);
+	return ret;
 }
 

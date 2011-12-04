@@ -1,11 +1,25 @@
 #include "btree.h"
 
-static record_t *
-nextrecord(
-	struct bt_node *node
+static void
+nextentry(
+	addr_t childaddr,
+	struct bt_entry **entry, /* output */
+	struct bt_node **node /* output */
 )
 {
-	
+	struct bt_node *n;
+	addr_t addr = childaddr;
+
+	while (1) {
+		n = getnode(addr);
+		if (n->addr0 == ADDR_NULL) {
+			*entry = &(n->entries[0]);
+			*node = n;
+			return;
+		}
+		addr = n->addr0;
+		freenode(n);
+	}
 }
 
 void
@@ -14,14 +28,28 @@ delete(
 	key_t key
 )
 {
-	record_t *record;
+	struct bt_entry *entry;
 	struct bt_node *node;
-	int result;
 
-	result = searchnode(btree, key, &record, &node);
-	if (result) return;
+	searchnode(btree, key, &entry, &node);
+	if (!entry) {
+		freenode(node);
+		return;
+	}
 
 	if (node->addr0 != ADDR_NULL) {
-		record_t *next;
+		struct bt_entry *nentry;
+		struct bt_node *nnode;
+
+		nextentry(node->addr0, &nentry, &nnode);
+		entry->record = nentry->record; /* replace */
+
+		save(node);
+		freenode(node);
+
+		node = nnode;
+		entry = nentry;
 	}
+
+	freenode(node); /* stub */
 }

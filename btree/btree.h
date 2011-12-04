@@ -31,15 +31,15 @@ r2k(record_t *record)
 	return *record;
 }
 
-struct bt_node *createnode();
+struct bt_node *createnode(void);
 void deletenode(struct bt_node *);
 void freenode(struct bt_node *);
 int compare(key_t, record_t *);
 struct bt_node *getnode(addr_t);
 void save(struct bt_node *);
-int searchnode(addr_t, key_t, record_t **, struct bt_node **);
+void searchnode(addr_t, key_t, struct bt_entry **, struct bt_node **);
 
-addr_t createbtree();
+addr_t createbtree(void);
 record_t *search(addr_t, key_t);
 addr_t store(addr_t, record_t *);
 void delete(addr_t, key_t);
