@@ -1,0 +1,4 @@
+main.o: main.c btree.h
+btree.o: btree.c btree.h
+store.o: store.c btree.h
+delete.o: delete.c btree.h
