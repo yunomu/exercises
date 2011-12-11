@@ -41,6 +41,7 @@ void searchnode(addr_t, key_t, struct bt_entry **, struct bt_node **);
 void storeentry(struct bt_node *, struct bt_entry *, addr_t);
 
 addr_t createbtree(void);
+void deletebtree(addr_t);
 record_t *search(addr_t, key_t);
 addr_t store(addr_t, record_t *);
 void delete(addr_t, key_t);

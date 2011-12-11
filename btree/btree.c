@@ -26,13 +26,6 @@ deletenode(
 	struct bt_node *node
 )
 {
-	if (node->addr0 != ADDR_NULL) {
-		int i;
-		for (i = 0; i < node->size; i++) {
-			free((void *) node->entries[i].addr);
-		}
-	}
-
 	free(node);
 }
 
@@ -82,6 +75,23 @@ addr_t
 createbtree()
 {
 	return (addr_t) createnode();
+}
+
+void
+deletebtree(
+	addr_t root
+)
+{
+	struct bt_node *node = getnode(root);
+
+	if (node->addr0 != ADDR_NULL) {
+		int i;
+		for (i = 0; i < node->size; i++) {
+			free((void *) node->entries[i].addr);
+		}
+	}
+
+	free(node);
 }
 
 /* XXX */

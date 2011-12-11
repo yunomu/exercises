@@ -40,33 +40,65 @@ s(key_t key)
 	free(record);
 }
 
-int
-main(int argc, char *argv[])
+void
+as(int a[], int size)
 {
 	int i;
-
-	if (argc == 1) {
-		printf("Usage: %s int [int...]\n", argv[0]);
-		return -1;
+	for (i = 0; i < size; i++) {
+		root = store(root, &(a[i]));
 	}
+}
 
-	root = createbtree();
 
-	for (i = 1; i < argc; i++) {
-		record_t record = atoi(argv[i]);
-		root = store(root, &record);
-	}
-
+void
+test1()
+{
+	int a[] = {
+		60,
+		10,
+		29,
+		92,
+		3,
+		8,
+		14,
+		25,
+		85,
+		32,
+		72,
+		36,
+		40,
+		50,
+		90,
+		63,
+		68,
+		77,
+		80,
+		96,
+	};
+	as(a, 20);
 	dump(root, 0);
 
 	s(72);
 	s(50);
 	s(80);
+}
 
+void
+test11()
+{
+	delete(root, 50);
+	delete(root, 68);
 	delete(root, 85);
 	dump(root, 0);
+}
 
-	deletenode((struct bt_node *) root);
+int
+main(int argc, char *argv[])
+{
+	root = createbtree();
+	test1();
+	test11();
+	deletebtree(root);
 
 	return 0;
 }
