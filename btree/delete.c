@@ -3,7 +3,9 @@
 enum dir {
 	DIR_NONE = 0,
 	DIR_LEFT,
-	DIR_RIGHT
+	DIR_RIGHT,
+	DIR_LEFT_COMB,
+	DIR_RIGHT_COMB
 };
 
 static void
@@ -93,17 +95,22 @@ left:
 		*neighbour = tmp;
 		return DIR_LEFT;
 	}
-	freenode(tmp);
 
 right:
-	tmp = getnode(pentries[i].addr);
+	if ((i + 1) >= parent->size) {
+		*neighbour = tmp;
+		return DIR_LEFT_COMB;
+	}
+	freenode(tmp);
+
+	tmp = getnode(pentries[i + 1].addr);
 	if ((node->size + tmp->size) >= NODE_SIZE_MAX) {
 		*neighbour = tmp;
 		return DIR_RIGHT;
 	}
-	freenode(tmp);
 
-	return DIR_NONE;
+	*neighbour = tmp;
+	return DIR_RIGHT_COMB;
 }
 
 static void
@@ -116,12 +123,17 @@ underflow(
 )
 {
 	struct bt_entry tmp, *mov;
+	addr_t left_addr;
 
 	tmp = *pentry;
 	if (dir == DIR_LEFT) {
 		mov = &(neighbour->entries[neighbour->size - 1]);
+		tmp.addr = node->addr0;
+		left_addr = mov->addr;
 	} else if (dir == DIR_RIGHT) {
 		mov = &(neighbour->entries[0]);
+		tmp.addr = neighbour->addr0;
+		left_addr = ADDR_NULL;
 	} else {
 		/* not reached */
 		return;
@@ -129,7 +141,41 @@ underflow(
 
 	pentry->record = mov->record;
 	deleteentry(neighbour, mov);
-	storeentry(node, &tmp, ADDR_NULL);
+	storeentry(node, &tmp, left_addr);
+}
+
+static void
+combine(
+	struct bt_node *node,
+	struct bt_node *parent,
+	enum dir dir,
+	struct bt_node *neighbour,
+	struct bt_entry *pentry
+)
+{
+	struct bt_entry *entries, tmp;
+	int i;
+	addr_t left_addr, pleft_addr;
+
+	tmp = *pentry;
+
+	if (dir == DIR_LEFT_COMB) {
+		left_addr = ADDR_NULL;
+		tmp.addr = node->addr0;
+	} else if (dir == DIR_RIGHT_COMB) {
+		left_addr = node->addr0;
+		tmp.addr = neighbour->addr0;
+	} else {
+		/* not reached */
+		return;
+	}
+
+	entries = node->entries;
+	storeentry(neighbour, &(entries[0]), left_addr);
+	for (i = 1; i < node->size; i++) {
+		storeentry(neighbour, &(entries[i]), ADDR_NULL);
+	}
+	storeentry(neighbour, &tmp, ADDR_NULL);
 }
 
 void
@@ -175,7 +221,14 @@ delete(
 
 		parent = getnode(node->parent);
 		dir = getneighbournode(node, parent, &nnode, &pentry);
-		if (dir != DIR_NONE) {
+		if (dir == DIR_NONE) {
+			/* error */
+			freenode(node);
+			freenode(nnode);
+			freenode(parent);
+			return;
+		}
+		if ((dir != DIR_LEFT_COMB) && (dir != DIR_RIGHT_COMB)) {
 			underflow(node, parent, dir, nnode, pentry);
 			save(node); freenode(node);
 			save(nnode); freenode(nnode);
@@ -183,7 +236,10 @@ delete(
 			return;
 		}
 
-		/* combine phase */
-		return;
+		combine(node, parent, dir, nnode, pentry);
+		deletenode(node);
+		freenode(nnode);
+		node = parent;
+		entry = pentry;
 	}
 }
