@@ -1,16 +1,20 @@
-TARGET	= libbtree.o
-SRCS	= btree.c store.c delete.c
-OBJS	= ${SRCS:.c=.o}
+TARGET	= test
+SRCS	= test.c
+LIBS	= ../libbtree.o
+OBJS	= ${SRCS:.c=.o} ${LIBS}
 
 all: ${TARGET}
 
 ${TARGET}: ${OBJS}
-	ld -o ${TARGET} -r ${OBJS}
+	gcc -o ${TARGET} ${OBJS}
 
 .c.o: .depend
 	gcc -c $<
 
 -include .depend
+
+${LIBS}:
+	cd ../ && ${MAKE}
 
 clean:
 	rm -f ${TARGET} ${OBJS}

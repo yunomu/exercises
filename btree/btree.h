@@ -38,6 +38,7 @@ int compare(key_t, record_t *);
 struct bt_node *getnode(addr_t);
 void save(struct bt_node *);
 void searchnode(addr_t, key_t, struct bt_entry **, struct bt_node **);
+void storeentry(struct bt_node *, struct bt_entry *, addr_t);
 
 addr_t createbtree(void);
 record_t *search(addr_t, key_t);

@@ -1,6 +1,6 @@
 #include "btree.h"
 
-static void
+void
 storeentry(
 	struct bt_node *node,
 	struct bt_entry *entry,

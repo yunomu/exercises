@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "btree.h"
+#include "../btree.h"
 
 void
 dump(
@@ -63,8 +63,6 @@ main(int argc, char *argv[])
 	s(50);
 	s(80);
 
-	delete(root, 68);
-	delete(root, 50);
 	delete(root, 85);
 	dump(root, 0);
 
