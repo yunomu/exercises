@@ -63,6 +63,11 @@ main(int argc, char *argv[])
 	s(50);
 	s(80);
 
+	delete(root, 68);
+	delete(root, 50);
+	delete(root, 85);
+	dump(root, 0);
+
 	deletenode((struct bt_node *) root);
 
 	return 0;
