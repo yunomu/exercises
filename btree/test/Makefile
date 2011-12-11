@@ -1,12 +1,14 @@
 TARGET	= test
 SRCS	= test.c
-LIBS	= ../libbtree.o
-OBJS	= ${SRCS:.c=.o} ${LIBS}
+SLIBS	= libbtree.o
+LIBDIR	= ..
+LIBS	= ${addprefix ${LIBDIR}/,${SLIBS}}
+OBJS	= ${SRCS:.c=.o}
 
 all: ${TARGET}
 
-${TARGET}: ${OBJS}
-	gcc -o ${TARGET} ${OBJS}
+${TARGET}: ${OBJS} ${LIBS}
+	gcc -o ${TARGET} ${OBJS} ${LIBS}
 
 .c.o: .depend
 	gcc -c $<
