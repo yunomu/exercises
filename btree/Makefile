@@ -8,7 +8,6 @@ all: ${TARGET}
 
 ${TARGET}: ${OBJS}
 	gcc -o ${TARGET} -shared ${OBJS}
-#	ld -o ${TARGET} -r ${OBJS}
 
 .c.o: .depend
 	gcc -c $<

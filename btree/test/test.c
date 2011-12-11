@@ -124,7 +124,7 @@ main(int argc, char *argv[])
 	test2();
 	deletebtree(root);
 
-	printf("--- test2()\n");
+	printf("--- test3()\n");
 	root = createbtree();
 	test3();
 	deletebtree(root);

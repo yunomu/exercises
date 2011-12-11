@@ -9,7 +9,6 @@ all: ${TARGET}
 
 ${TARGET}: ${OBJS} ${LIBFILES}
 	gcc -o ${TARGET} ${OBJS} -L.. -l${LIBS}
-#	gcc -o ${TARGET} ${OBJS} ${LIBS}
 
 .c.o: .depend
 	gcc -c $<
