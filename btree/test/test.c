@@ -74,8 +74,9 @@ test1()
 		77,
 		80,
 		96,
+		79,
 	};
-	as(a, 20);
+	as(a, 21);
 	dump(root, 0);
 
 	s(72);
@@ -83,18 +84,52 @@ test1()
 	s(80);
 }
 
+static void
+d(key_t key)
+{
+	printf("delete: %d\n", key);
+	delete(root, key);
+}
+
 void
 test11()
 {
-	delete(root, 50);
-	delete(root, 68);
-	delete(root, 85);
+	d(50);
+	d(68);
+	d(85);
+	dump(root, 0);
+}
+
+void
+test2()
+{
+	int a[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+	as(a, 17);
+	dump(root, 0);
+}
+
+void
+test3()
+{
+	int a[] = {17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+	as(a, 17);
 	dump(root, 0);
 }
 
 int
 main(int argc, char *argv[])
 {
+	printf("--- test2()\n");
+	root = createbtree();
+	test2();
+	deletebtree(root);
+
+	printf("--- test2()\n");
+	root = createbtree();
+	test3();
+	deletebtree(root);
+
+	printf("--- test1()\n");
 	root = createbtree();
 	test1();
 	test11();
