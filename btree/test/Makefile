@@ -15,7 +15,7 @@ ${TARGET}: ${OBJS}
 -include .depend
 
 lib:
-	cd ../ && ${MAKE}
+	cd ${LIBDIR}/ && ${MAKE}
 
 clean:
 	rm -f ${TARGET} ${OBJS}
