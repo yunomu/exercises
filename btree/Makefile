@@ -18,7 +18,6 @@ ${TARGET}: ${OBJS}
 
 clean:
 	rm -f ${TARGET} ${OBJS}
-	cd ${TESTDIR} && ${MAKE} clean
 
 depend:
 	rm -f .depend
@@ -26,6 +25,9 @@ depend:
 
 test: ${TARGET} ${TEST}
 	./${TEST}
+
+test-clean:
+	cd ${TESTDIR} && ${MAKE} clean
 
 ${TEST}:
 	cd ${TESTDIR} && ${MAKE}
