@@ -74,7 +74,7 @@ getneighbournode(
 	}
 
 	for (i = 0; i < parent->size; i++) {
-		if (pentries->addr == node_addr) {
+		if (pentries[i].addr == node_addr) {
 			*pentry = pentries + i;
 			break;
 		}
@@ -96,14 +96,16 @@ left:
 		return DIR_LEFT;
 	}
 
-right:
 	if ((i + 1) >= parent->size) {
 		*neighbour = tmp;
 		return DIR_LEFT_COMB;
 	}
 	freenode(tmp);
 
-	tmp = getnode(pentries[i + 1].addr);
+	*pentry = pentries + i + 1;
+
+right:
+	tmp = getnode((*pentry)->addr);
 	if ((node->size + tmp->size) >= NODE_SIZE_MAX) {
 		*neighbour = tmp;
 		return DIR_RIGHT;

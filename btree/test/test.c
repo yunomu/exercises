@@ -75,8 +75,11 @@ test1()
 		80,
 		96,
 		79,
+		78,
+		5,
+		34,
 	};
-	as(a, 21);
+	as(a, 24);
 	dump(root, 0);
 
 	s(72);
@@ -97,6 +100,14 @@ test11()
 	d(50);
 	d(68);
 	d(85);
+	dump(root, 0);
+	d(92);
+	dump(root, 0);
+	d(60);
+	dump(root, 0);
+	d(25);
+	dump(root, 0);
+	d(10);
 	dump(root, 0);
 }
 
