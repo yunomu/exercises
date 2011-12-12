@@ -24,6 +24,7 @@ depend:
 	gcc -MM ${SRCS} >> .depend
 
 test: ${TARGET} ${TEST}
+	cd ${TESTDIR} && ${MAKE}
 	./${TEST}
 
 test-clean:
