@@ -7,10 +7,10 @@ OBJS		= ${SRCS:.c=.o}
 all: ${TARGET}
 
 ${TARGET}: ${OBJS}
-	gcc -o ${TARGET} ${OBJS} -L.. -l${LIBS}
+	gcc -o ${TARGET} ${OBJS} -L${LIBDIR} -l${LIBS}
 
 .c.o: .depend
-	gcc -c $<
+	gcc -c $< -I${LIBDIR}
 
 -include .depend
 
@@ -22,5 +22,5 @@ clean:
 
 depend:
 	rm -f .depend
-	gcc -MM ${SRCS} >> .depend
+	gcc -M ${SRCS} -I${LIBDIR} >> .depend
 
