@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <btree_in.h>
 #include <btree.h>
 
 static void

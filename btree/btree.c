@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "btree_in.h"
 #include "btree.h"
 
 

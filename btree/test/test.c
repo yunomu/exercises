@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 #include <btree.h>
 
@@ -14,7 +13,6 @@ s(key_t key)
 	} else {
 		printf("search: %d -> notfound\n", key);
 	}
-	free(record);
 }
 
 void
