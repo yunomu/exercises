@@ -3,13 +3,13 @@
 
 #include <btree.h>
 
-void
-dump(
-	addr_t btree,
+static void
+dump_in(
+	addr_t addr,
 	int d
 )
 {
-	struct bt_node *node = (struct bt_node *) btree;
+	struct bt_node *node = (struct bt_node *) addr;
 	int i;
 
 	printf("%d: ", d);
@@ -20,18 +20,24 @@ dump(
 
 	if (node->addr0 == ADDR_NULL) return;
 
-	dump(node->addr0, d+1);
+	dump_in(node->addr0, d+1);
 	for (i = 0; i < node->size; i++) {
-		dump(node->entries[i].addr, d+1);
+		dump_in(node->entries[i].addr, d+1);
 	}
 }
 
-addr_t root;
+void
+dump(BTREE* btree)
+{
+	dump_in(btree->root, 0);
+}
+
+BTREE* btree;
 
 void
 s(key_t key)
 {
-	record_t *record = search(root, key);
+	record_t *record = search(btree, key);
 	if (record) {
 		printf("search: %d -> %d\n", key, *record);
 	} else {
@@ -45,7 +51,7 @@ as(int a[], int size)
 {
 	int i;
 	for (i = 0; i < size; i++) {
-		root = store(root, &(a[i]));
+		store(btree, &(a[i]));
 	}
 }
 
@@ -80,7 +86,7 @@ test1()
 		34,
 	};
 	as(a, 24);
-	dump(root, 0);
+	dump(btree);
 
 	s(72);
 	s(50);
@@ -91,24 +97,49 @@ static void
 d(key_t key)
 {
 	printf("delete: %d\n", key);
-	delete(root, key);
+	delete(btree, key);
 }
 
 void
 test11()
 {
+	printf("--- test11\n");
 	d(50);
 	d(68);
+	dump(btree);
+}
+
+void
+test12()
+{
+	printf("--- test12\n");
 	d(85);
-	dump(root, 0);
+	dump(btree);
+}
+
+void
+test13()
+{
+	printf("--- test131\n");
 	d(92);
-	dump(root, 0);
+	dump(btree);
+	printf("--- test132\n");
 	d(60);
-	dump(root, 0);
+	dump(btree);
+	printf("--- test133\n");
 	d(25);
-	dump(root, 0);
+	dump(btree);
+	printf("--- test134\n");
 	d(10);
-	dump(root, 0);
+	dump(btree);
+}
+
+void
+test14()
+{
+	printf("--- test14\n");
+	d(63);
+	dump(btree);
 }
 
 void
@@ -116,7 +147,7 @@ test2()
 {
 	int a[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
 	as(a, 17);
-	dump(root, 0);
+	dump(btree);
 }
 
 void
@@ -124,27 +155,30 @@ test3()
 {
 	int a[] = {17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
 	as(a, 17);
-	dump(root, 0);
+	dump(btree);
 }
 
 int
 main(int argc, char *argv[])
 {
 	printf("--- test2()\n");
-	root = createbtree();
+	btree = createbtree();
 	test2();
-	deletebtree(root);
+	deletebtree(btree);
 
 	printf("--- test3()\n");
-	root = createbtree();
+	btree = createbtree();
 	test3();
-	deletebtree(root);
+	deletebtree(btree);
 
 	printf("--- test1()\n");
-	root = createbtree();
+	btree = createbtree();
 	test1();
 	test11();
-	deletebtree(root);
+	test12();
+	test13();
+	test14();
+	deletebtree(btree);
 
 	return 0;
 }

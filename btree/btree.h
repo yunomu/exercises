@@ -10,6 +10,11 @@
 typedef unsigned long addr_t;
 typedef int record_t;
 typedef record_t key_t;
+typedef struct btree BTREE;
+
+struct btree {
+	addr_t root;
+};
 
 struct bt_entry {
 	record_t record;
@@ -40,10 +45,10 @@ void save(struct bt_node *);
 void searchnode(addr_t, key_t, struct bt_entry **, struct bt_node **);
 void storeentry(struct bt_node *, struct bt_entry *, addr_t);
 
-addr_t createbtree(void);
-void deletebtree(addr_t);
-record_t *search(addr_t, key_t);
-addr_t store(addr_t, record_t *);
-void delete(addr_t, key_t);
+BTREE* createbtree(void);
+void deletebtree(BTREE*);
+record_t *search(BTREE*, key_t);
+int store(BTREE*, record_t *);
+int delete(BTREE*, key_t);
 
 #endif /* __BTREE_H__ */

@@ -71,18 +71,21 @@ compare(
 	return r2k(record) - key;
 }
 
-addr_t
+BTREE*
 createbtree()
 {
-	return (addr_t) createnode();
+	BTREE *ret;
+	ret = (BTREE*) malloc(sizeof (BTREE));
+	ret->root = (addr_t) createnode();
+	return ret;
 }
 
 void
 deletebtree(
-	addr_t root
+	BTREE* btree
 )
 {
-	struct bt_node *node = getnode(root);
+	struct bt_node *node = getnode(btree->root);
 
 	if (node->addr0 != ADDR_NULL) {
 		int i;
@@ -92,6 +95,7 @@ deletebtree(
 	}
 
 	free(node);
+	free(btree);
 }
 
 /* XXX */
@@ -141,7 +145,7 @@ searchnode(
 
 record_t *
 search(
-	addr_t btree,
+	BTREE* btree,
 	key_t key
 )
 {
@@ -149,7 +153,7 @@ search(
 	struct bt_node *node;
 	record_t *ret;
 
-	searchnode(btree, key, &entry, &node);
+	searchnode(btree->root, key, &entry, &node);
 	if (entry) {
 		ret = (record_t *) malloc(sizeof (record_t));
 		*ret = entry->record; /* memcopy */

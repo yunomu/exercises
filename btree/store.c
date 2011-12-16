@@ -110,34 +110,35 @@ splitnode(
 	*right = rnode;
 }
 
-addr_t
+int
 store(
-	addr_t btree,
+	BTREE* btree,
 	record_t *record
 )
 {
 	key_t key = r2k(record);
 	struct bt_node *node;
 	struct bt_entry new_entry;
-	addr_t root, left_addr;
+	addr_t root = btree->root, left_addr;
 
 	{
 		struct bt_entry *result;
-		searchnode(btree, key, &result, &node);
-		if (result) return ADDR_NULL;
+		searchnode(root, key, &result, &node);
+		if (result) return -1; /* error */
 	}
 
 	new_entry.record = *record;
 	new_entry.addr = ADDR_NULL;
 
-	root = btree;
+	root = btree->root;
 	left_addr = ADDR_NULL;
 	while (1) {
 		struct bt_node *left, *right;
 
 		if (node->size < NODE_SIZE_MAX) {
 			storeentry(node, &new_entry, left_addr);
-			return root;
+			btree->root = root;
+			return 0;
 		}
 
 		splitnode(node, &new_entry, &left, &right);

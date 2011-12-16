@@ -180,19 +180,19 @@ combine(
 	storeentry(neighbour, &tmp, ADDR_NULL);
 }
 
-void
+int
 delete(
-	addr_t btree,
+	BTREE* btree,
 	key_t key
 )
 {
 	struct bt_entry *entry;
 	struct bt_node *node;
 
-	searchnode(btree, key, &entry, &node);
+	searchnode(btree->root, key, &entry, &node);
 	if (!entry) {
 		freenode(node);
-		return;
+		return -1;
 	}
 
 	if (node->addr0 != ADDR_NULL) {
@@ -215,10 +215,25 @@ delete(
 		enum dir dir;
 
 		deleteentry(node, entry);
-		if ((node->size >= NODE_SIZE_MIN) || (node->parent == ADDR_NULL)) {
+		if (node->size >= NODE_SIZE_MIN) {
 			save(node);
 			freenode(node);
-			return;
+			return 0;
+		}
+		if (node->parent == ADDR_NULL) {
+			addr_t root;
+			if (node->size == 0) {
+				root = node->addr0;
+				deletenode(node);
+				node = getnode(root);
+				node->parent = ADDR_NULL;
+			} else {
+				root = btree->root;
+			}
+			save(node);
+			freenode(node);
+			btree->root = root;
+			return 0;
 		}
 
 		parent = getnode(node->parent);
@@ -228,14 +243,14 @@ delete(
 			freenode(node);
 			freenode(nnode);
 			freenode(parent);
-			return;
+			return -1;
 		}
 		if ((dir != DIR_LEFT_COMB) && (dir != DIR_RIGHT_COMB)) {
 			underflow(node, parent, dir, nnode, pentry);
 			save(node); freenode(node);
 			save(nnode); freenode(nnode);
 			save(parent); freenode(parent);
-			return;
+			return 0;
 		}
 
 		combine(node, parent, dir, nnode, pentry);
