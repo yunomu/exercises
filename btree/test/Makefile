@@ -1,5 +1,5 @@
 TARGET		= test
-SRCS		= test.c
+SRCS		= test.c dump.c
 LIBS		= btree
 LIBDIR		= ..
 OBJS		= ${SRCS:.c=.o}
