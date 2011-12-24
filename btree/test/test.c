@@ -112,6 +112,14 @@ test14()
 }
 
 void
+test15()
+{
+	printf("--- test15\n");
+	d(14);
+	dump(btree);
+}
+
+void
 test2()
 {
 	int a[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
@@ -198,14 +206,6 @@ int main(int argc, char *argv[])
 	deletebtree(btree);
 
 	btree = createbtree();
-	test1();
-	test11();
-	test12();
-	test13();
-	test14();
-	deletebtree(btree);
-
-	btree = createbtree();
 	test4();
 	test41();
 	deletebtree(btree);
@@ -228,6 +228,15 @@ int main(int argc, char *argv[])
 	btree = createbtree();
 	test5();
 	test52();
+	deletebtree(btree);
+
+	btree = createbtree();
+	test1();
+	test11();
+	test12();
+	test13();
+	test14();
+	test15();
 	deletebtree(btree);
 
 	return 0;
