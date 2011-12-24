@@ -185,8 +185,7 @@ combine(
 
 	entries = node->entries;
 	for (i = 0; i < node->size; i++) {
-		storeentry(neighbour, &(entries[i]), left_addr);
-		left_addr = entries[i].addr;
+		storeentry(neighbour, &(entries[i]), ADDR_NULL);
 	}
 	storeentry(neighbour, &tmp, left_addr);
 

@@ -183,7 +183,7 @@ void
 test52()
 {
 	printf("--- test52\n");
-	d(5);
+	d(4);
 	dump(btree);
 }
 
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
 	test11();
 	test12();
 	test13();
-	//test14();
+	test14();
 	deletebtree(btree);
 
 	btree = createbtree();
