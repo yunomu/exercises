@@ -53,6 +53,7 @@ test1()
 		5,
 		34,
 	};
+	printf("--- test1()\n");
 	as(a, 24);
 	dump(btree);
 
@@ -114,6 +115,7 @@ void
 test2()
 {
 	int a[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+	printf("--- test2()\n");
 	as(a, 17);
 	dump(btree);
 }
@@ -122,30 +124,110 @@ void
 test3()
 {
 	int a[] = {17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+	printf("--- test3()\n");
 	as(a, 17);
 	dump(btree);
 }
 
-int
-main(int argc, char *argv[])
+void
+test4()
 {
-	printf("--- test2()\n");
+	int a[] = {8, 7, 6, 5, 4, 3, 2, 1};
+	printf("--- test4()\n");
+	as(a, 8);
+	dump(btree);
+}
+
+void
+test41()
+{
+	printf("--- test41\n");
+	d(1);
+	dump(btree);
+}
+
+void
+test42()
+{
+	printf("--- test42\n");
+	d(4);
+	dump(btree);
+}
+
+void
+test43()
+{
+	printf("--- test43\n");
+	d(7);
+	dump(btree);
+}
+
+void
+test5()
+{
+	int a[] = {5, 4, 3, 2, 1};
+	printf("--- test5()\n");
+	as(a, 5);
+	dump(btree);
+}
+
+void
+test51()
+{
+	printf("--- test51\n");
+	d(1);
+	dump(btree);
+}
+
+void
+test52()
+{
+	printf("--- test52\n");
+	d(5);
+	dump(btree);
+}
+
+int main(int argc, char *argv[])
+{
 	btree = createbtree();
 	test2();
 	deletebtree(btree);
 
-	printf("--- test3()\n");
 	btree = createbtree();
 	test3();
 	deletebtree(btree);
 
-	printf("--- test1()\n");
 	btree = createbtree();
 	test1();
 	test11();
 	test12();
 	test13();
-	test14();
+	//test14();
+	deletebtree(btree);
+
+	btree = createbtree();
+	test4();
+	test41();
+	deletebtree(btree);
+
+	btree = createbtree();
+	test4();
+	test42();
+	deletebtree(btree);
+
+	btree = createbtree();
+	test4();
+	test43();
+	deletebtree(btree);
+
+	btree = createbtree();
+	test5();
+	test51();
+	deletebtree(btree);
+
+	btree = createbtree();
+	test5();
+	test52();
 	deletebtree(btree);
 
 	return 0;

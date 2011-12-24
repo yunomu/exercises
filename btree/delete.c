@@ -34,7 +34,8 @@ nextentry(
 static void
 deleteentry(
 	struct bt_node *node,
-	struct bt_entry *entry
+	struct bt_entry *entry,
+	addr_t left_addr
 )
 {
 	struct bt_entry *entries, tmp;
@@ -47,8 +48,15 @@ deleteentry(
 			break;
 		}
 	}
-	for (i = i + 1; i < size; i++) {
-		entries[i - 1] = entries[i];
+
+	if (i == 0) {
+		node->addr0 = left_addr;
+	} else {
+		entries[i - 1].addr = left_addr;
+	}
+
+	for (i = i; i < size - 1; i++) {
+		entries[i] = entries[i + 1];
 	}
 	node->size = size - 1;
 }
@@ -143,11 +151,11 @@ underflow(
 	}
 
 	pentry->record = mov->record;
-	deleteentry(neighbour, mov);
+	deleteentry(neighbour, mov, ADDR_NULL);
 	storeentry(node, &tmp, left_addr);
 }
 
-static void
+static addr_t
 combine(
 	struct bt_node *node,
 	struct bt_node *parent,
@@ -158,15 +166,17 @@ combine(
 {
 	struct bt_entry *entries, tmp;
 	int i;
-	addr_t left_addr, pleft_addr;
+	addr_t left_addr, ret;
 
 	tmp = *pentry;
 
 	if (dir == DIR_LEFT_COMB) {
 		left_addr = ADDR_NULL;
+		ret = neighbour->addr;
 		tmp.addr = node->addr0;
 	} else if (dir == DIR_RIGHT_COMB) {
 		left_addr = node->addr0;
+		ret = pentry->addr;
 		tmp.addr = neighbour->addr0;
 	} else {
 		/* not reached */
@@ -174,11 +184,13 @@ combine(
 	}
 
 	entries = node->entries;
-	storeentry(neighbour, &(entries[0]), left_addr);
-	for (i = 1; i < node->size; i++) {
-		storeentry(neighbour, &(entries[i]), ADDR_NULL);
+	for (i = 0; i < node->size; i++) {
+		storeentry(neighbour, &(entries[i]), left_addr);
+		left_addr = entries[i].addr;
 	}
-	storeentry(neighbour, &tmp, ADDR_NULL);
+	storeentry(neighbour, &tmp, left_addr);
+
+	return ret;
 }
 
 int
@@ -189,6 +201,7 @@ delete(
 {
 	struct bt_entry *entry;
 	struct bt_node *node;
+	addr_t left_addr;
 
 	searchnode(btree->root, key, &entry, &node);
 	if (!entry) {
@@ -210,12 +223,13 @@ delete(
 		entry = nentry;
 	}
 
+	left_addr = ADDR_NULL;
 	while (1) {
 		struct bt_node *parent, *nnode;
 		struct bt_entry *pentry;
 		enum dir dir;
 
-		deleteentry(node, entry);
+		deleteentry(node, entry, left_addr);
 		if (node->size >= NODE_SIZE_MIN) {
 			save(node);
 			freenode(node);
@@ -254,7 +268,7 @@ delete(
 			return 0;
 		}
 
-		combine(node, parent, dir, nnode, pentry);
+		left_addr = combine(node, parent, dir, nnode, pentry);
 		deletenode(node);
 		freenode(nnode);
 		node = parent;
