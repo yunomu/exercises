@@ -14,6 +14,12 @@ termfunc(int signum)
 	exit(0);
 }
 
+void
+childfunc(int signum)
+{
+	waitpid(-1, (int *) 0, 0);
+}
+
 int
 setupserver(int port, int backlog)
 {
@@ -45,6 +51,7 @@ setupserver(int port, int backlog)
 	signal(SIGTERM, termfunc);
 	signal(SIGHUP, termfunc);
 	signal(SIGINT, termfunc);
+	signal(SIGCHLD, childfunc);
 
 	return fd;
 }
