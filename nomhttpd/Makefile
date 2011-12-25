@@ -1,5 +1,5 @@
 TARGET	= nomhttpd
-SRCS	= main.c server.c worker.c
+SRCS	= main.c server.c worker.c parser.c
 OBJS	= ${SRCS:.c=.o}
 
 all: ${TARGET}

@@ -4,14 +4,14 @@
 
 #define READ_BUF_SIZE 512
 
-static int
+static __inline int
 sockwrite(int fd, char *buf)
 {
 	return write(fd, buf, strlen(buf));
 }
 
 int
-cgi(int fd) {
+proc(int fd) {
 	FILE *fp;
 	char *buf;
 	int i;
@@ -46,14 +46,12 @@ staticfile(int fd)
 int
 worker(int serverfd, int fd)
 {
-	char read_buf[READ_BUF_SIZE];
-
-	read(fd, read_buf, READ_BUF_SIZE);
+	parse(fd);
 
 	sockwrite(fd, "HTTP/1.0 200 OK\r\n");
 	staticfile(fd);
 	/*
-	cgi(fd);
+	proc(fd);
 	*/
 
 	close(fd);
