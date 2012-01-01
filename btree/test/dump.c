@@ -12,9 +12,10 @@ dump_in(
 	struct bt_node *node = (struct bt_node *) addr;
 	int i;
 
-	printf("%d@%p: %011p ", d, node->addr, node->addr0);
+	printf("%d@%p: %11p ", d, (void *) node->addr, (void *) node->addr0);
 	for (i = 0; i < node->size; i++) {
-		printf("%2d %011p ", node->entries[i].record, node->entries[i].addr);
+		printf("%2d %11p ",
+			node->entries[i].record, (void *) node->entries[i].addr);
 	}
 	printf("\n");
 
