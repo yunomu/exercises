@@ -1,12 +1,14 @@
 -module(httpd).
--export([start/0]).
+-export([start/0, start/1]).
 %-compile(export_all).
+
+-import(io_lib, [format/2]).
 
 start() -> start(31011).
 
 start(Port) ->
 	{ok, Listen} = gen_tcp:listen(Port,
-						[binary, {reuseaddr, true}, {active, true}]),
+	               	[binary, {reuseaddr, true}, {active, true}]),
 	io:format("start httpd.~nport: ~p~n", [Port]),
 	spawn(fun() -> loop(Listen) end).
 
@@ -17,19 +19,22 @@ loop(Listen) ->
 		{tcp, Socket, Bin} ->
 			Str = binary_to_list(Bin),
 			io:format(Str),
-			sock_write(Socket, "HTTP/1.0 200 OK\r\n"),
-			sock_write(Socket, "Content-type: text/html\r\n\r\n"),
+			responce_header(Socket, 200, ["Content-type: text/html"]),
 			sock_write(Socket, "<h1>Index</h1>"),
-			gen_tcp:close(Socket),
-			loop(Listen);
+			gen_tcp:close(Socket);
 		{tcp_closed, Socket} ->
-			io:format("Server socket closed~n"),
-			loop(Listen);
+			io:format("Server socket closed~n");
 		Any ->
-			io:format("Received: ~p~n", [Any]),
-			loop(Listen)
+			io:format("Received: ~p~n", [Any])
 	end.
 
 sock_write(Socket, Str) ->
 	gen_tcp:send(Socket, list_to_binary(Str)).
+
+responce_header(Socket, Code, Header) ->
+	sock_write(Socket, format("HTTP/1.0 ~p OK\r\n", [Code])),
+	lists:map(fun(H) ->
+			sock_write(Socket, format("~p\r\n", [H]))
+		end, Header),
+	sock_write(Socket, "\r\n").
 
