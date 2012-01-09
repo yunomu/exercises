@@ -15,16 +15,23 @@ start(Port) ->
 loop(Listen) ->
 	{ok, Socket} = gen_tcp:accept(Listen),
 	spawn(fun() -> loop(Listen) end),
+	worker(Socket).
+
+worker(Socket) ->
+	request_parser:parse(receive_data(Socket)),
+	responce_header(Socket, 200, ["Content-type: text/html"]),
+	sock_write(Socket, "<h1>Index</h1>"),
+	gen_tcp:close(Socket).
+
+receive_data(Socket) ->
+	receive_data(Socket, []).
+
+receive_data(Socket, SoFar) ->
 	receive
 		{tcp, Socket, Bin} ->
-			request_parser:parse(binary_to_list(Bin)),
-			responce_header(Socket, 200, ["Content-type: text/html"]),
-			sock_write(Socket, "<h1>Index</h1>"),
-			gen_tcp:close(Socket);
+			receive_data(Socket, [Bin|SoFar]);
 		{tcp_closed, Socket} ->
-			io:format("Server socket closed~n");
-		Any ->
-			io:format("Received: ~p~n", [Any])
+			list_to_binary(lists:reverse(SoFar))
 	end.
 
 sock_write(Socket, Str) ->

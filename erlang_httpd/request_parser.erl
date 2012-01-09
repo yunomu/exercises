@@ -3,5 +3,6 @@
 %-compile(export_all).
 
 parse(Str) ->
-	io:fromat(Str). % stub
+	io:fromat(Str),
+	{request}.
 
