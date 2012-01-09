@@ -17,8 +17,7 @@ loop(Listen) ->
 	spawn(fun() -> loop(Listen) end),
 	receive
 		{tcp, Socket, Bin} ->
-			Str = binary_to_list(Bin),
-			io:format(Str),
+			request_parser:parse(binary_to_list(Bin)),
 			responce_header(Socket, 200, ["Content-type: text/html"]),
 			sock_write(Socket, "<h1>Index</h1>"),
 			gen_tcp:close(Socket);

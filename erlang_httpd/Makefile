@@ -1,4 +1,4 @@
-MODULES		= httpd counter
+MODULES		= httpd counter request_parser
 
 .SUFFIXES: .erl .beam
 
