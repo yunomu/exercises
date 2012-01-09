@@ -24,14 +24,14 @@ worker(Socket) ->
 	gen_tcp:close(Socket).
 
 receive_data(Socket) ->
-	receive_data(Socket, []).
-
-receive_data(Socket, SoFar) ->
 	receive
 		{tcp, Socket, Bin} ->
-			receive_data(Socket, [Bin|SoFar]);
+			io:format("Bin: ~p~n", [Bin]),
+			Str = binary_to_list(Bin),
+			io:format(Str),
+			Str;
 		{tcp_closed, Socket} ->
-			list_to_binary(lists:reverse(SoFar))
+			io:fwrite("error\n")
 	end.
 
 sock_write(Socket, Str) ->
