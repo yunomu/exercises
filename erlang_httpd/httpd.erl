@@ -8,11 +8,11 @@ start(Port) ->
 	{ok, Listen} = gen_tcp:listen(Port,
 						[binary, {reuseaddr, true}, {active, true}]),
 	io:format("start httpd.~nport: ~p~n", [Port]),
-	loop(Listen),
-	gen_tcp:close(Listen).
+	spawn(fun() -> loop(Listen) end).
 
 loop(Listen) ->
 	{ok, Socket} = gen_tcp:accept(Listen),
+	spawn(fun() -> loop(Listen) end),
 	receive
 		{tcp, Socket, Bin} ->
 			Str = binary_to_list(Bin),
