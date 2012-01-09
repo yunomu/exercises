@@ -9,13 +9,19 @@ start() -> start(31011).
 start(Port) ->
 	{ok, Listen} = gen_tcp:listen(Port,
 	               	[binary, {reuseaddr, true}, {active, true}]),
+	counter:start(thread_counter),
 	io:format("start httpd.~nport: ~p~n", [Port]),
+	fork(Listen).
+
+fork(Listen) ->
+	thread_counter ! add,
 	spawn(fun() -> loop(Listen) end).
 
 loop(Listen) ->
 	{ok, Socket} = gen_tcp:accept(Listen),
-	spawn(fun() -> loop(Listen) end),
-	worker(Socket).
+	fork(Listen),
+	worker(Socket),
+	thread_counter ! sub.
 
 worker(Socket) ->
 	request_parser:parse(receive_data(Socket)),
@@ -26,10 +32,7 @@ worker(Socket) ->
 receive_data(Socket) ->
 	receive
 		{tcp, Socket, Bin} ->
-			io:format("Bin: ~p~n", [Bin]),
-			Str = binary_to_list(Bin),
-			io:format(Str),
-			Str;
+			binary_to_list(Bin);
 		{tcp_closed, Socket} ->
 			io:fwrite("error\n")
 	end.
