@@ -19,7 +19,7 @@ calc s xs
 
 proc :: Stack Int -> String -> IO ()
 proc s xs
-    | xs == "p" = do putStrLn (show (peek s))
+    | xs == "p" = do (putStrLn.show.peek) s
                      input s
     | xs == "q" = putStrLn "bye v(^n^)v"
     | otherwise = input (calc s xs)
@@ -30,5 +30,5 @@ input s = do putStr " > "
              proc s xs
 
 main :: IO ()
-main = input Stack.empty
+main = input empty
 
