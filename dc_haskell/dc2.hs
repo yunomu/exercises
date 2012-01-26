@@ -4,7 +4,7 @@ import Parser
 ope :: Stack Int -> (Int -> Int -> Int) -> Maybe (Stack Int)
 ope s f = case pop s of
             Nothing       -> Nothing
-            Just (v1, s2) -> case pop s2 of
+            Just (v1, s1) -> case pop s1 of
                                Nothing       -> Nothing
                                Just (v2, s2) -> Just (push s2 (f v1 v2))
 
