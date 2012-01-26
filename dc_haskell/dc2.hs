@@ -32,9 +32,7 @@ readInt str = case parse int str of
                 _         -> Nothing
 
 store :: Stack Int -> String -> IO ()
-store s xs = maybe (calcError s) store' (readInt xs)
-             where
-               store' = \v -> input (push s v)
+store s xs = maybe (calcError s) (input.push s) (readInt xs)
 
 proc :: Stack Int -> String -> IO ()
 proc s xs
