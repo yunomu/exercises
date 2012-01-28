@@ -1,6 +1,8 @@
 
 > data Tree = Leaf Int | Node Tree Tree
 
+Tree型で、木の個数は節の個数よりも常に1多いことを数学的帰納法により示す。
+
 > countLeaf :: Tree -> Int
 > countLeaf (Leaf _)   = 1
 > countLeaf (Node l r) = (countLeaf l) + (countLeaf r)
@@ -23,10 +25,10 @@ Tree t2 => countLeaf t2 = (countNode t2) + 1
 
 Tree x => x = Node t1 t2とする。
 countLeaf x = countLeaf (Node t1 t2)
-			= (countLeaf t1) + (countLeaf t2)
-			= (countNode t1) + 1 + (countNode t2) + 1   #仮定より
-			= ((countNode t1) + (countNode t2) + 1) + 1
-			= (countNode (Node t1 t2)) + 1              #countNodeの定義より
-			= (countNode x) + 1
+            = (countLeaf t1) + (countLeaf t2)
+            = (countNode t1) + 1 + (countNode t2) + 1   #仮定より
+            = ((countNode t1) + (countNode t2) + 1) + 1
+            = (countNode (Node t1 t2)) + 1              #countNodeの定義より
+            = (countNode x) + 1
 おわり
 
