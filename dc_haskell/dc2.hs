@@ -48,11 +48,11 @@ proc s xs
     | xs == "/" = calc s div
     | otherwise = store s xs
 
-putStrF :: String -> IO ()
-putStrF s = putStr s >> hFlush stdout
+prompt :: IO ()
+prompt = putStr "> " >> hFlush stdout
 
 input :: Stack Int -> IO ()
-input s = do putStrF "> "
+input s = do prompt
              xs <- getLine
              proc s xs
 
