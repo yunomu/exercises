@@ -48,13 +48,14 @@ proc s xs
     | xs == "/" = calc s div
     | otherwise = store s xs
 
+putStrF :: String -> IO ()
+putStrF s = putStr s >> hFlush stdout
+
 input :: Stack Int -> IO ()
-input s = do putStr "> "
+input s = do putStrF "> "
              xs <- getLine
              proc s xs
 
 main :: IO ()
-main = do
-    hSetBuffering stdout NoBuffering
-    input empty
+main = input empty
 
