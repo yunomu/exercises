@@ -1,3 +1,5 @@
+import System.IO
+
 import Stack2
 import Parser
 
@@ -52,5 +54,7 @@ input s = do putStr "> "
              proc s xs
 
 main :: IO ()
-main = input empty
+main = do
+    hSetBuffering stdout NoBuffering
+    input empty
 
