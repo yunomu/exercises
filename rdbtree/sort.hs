@@ -11,6 +11,7 @@ main = do
 
 proc :: CSV -> IO ()
 proc = printTree . sortTree . construct . csvToNodeList
+--proc = putStrLn . show . flatten . sortTree . construct . csvToNodeList
 
 parseError :: Show a => a -> IO ()
 parseError err = do
@@ -80,4 +81,8 @@ sort f (x:xs) = insert x (sort f xs)
                   insert a (b:bs)
                     | f a b     = a:b:bs
                     | otherwise = b:insert a bs
+
+flatten :: [Tree] -> [Node]
+flatten [] = []
+flatten (T (n, cs):ts) = n:flatten cs ++ flatten ts
 
