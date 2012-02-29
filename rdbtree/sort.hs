@@ -82,7 +82,10 @@ sort f (x:xs) = insert x (sort f xs)
                     | f a b     = a:b:bs
                     | otherwise = b:insert a bs
 
-flatten :: [Tree] -> [Node]
-flatten [] = []
-flatten (T (n, cs):ts) = n:flatten cs ++ flatten ts
+flatten :: [Tree] -> [(Node, Int)]
+flatten t = f' t 0
+            where
+              f' []             _ = []
+              f' (T (n, cs):ts) d = (n, d):f' cs (d+1) ++ f' ts d
+
 
