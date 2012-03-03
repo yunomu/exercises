@@ -10,8 +10,8 @@ main = do
     either parseError proc csv
 
 proc :: CSV -> IO ()
-proc = printTree . sortTree . construct . csvToNodeList
---proc = putStrLn . show . flatten . sortTree . construct . csvToNodeList
+--proc = printTree . sortTree . construct . csvToNodeList
+proc = out . flatten . sortTree . construct . csvToNodeList
 
 parseError :: Show a => a -> IO ()
 parseError err = do
@@ -22,12 +22,33 @@ printTree :: [Tree] -> IO ()
 --printTree = putStrLn . show
 printTree = pt' ""
             where
-              pt' _ []               = putStr ""
-              pt' pre (T (n, cs):ts) = do
-                putStr pre
-                putStrLn . show $ n
-                pt' ('\t':pre) cs
-                pt' pre ts
+              pt' :: String -> [Tree] -> IO ()
+              pt' _ []               = return ()
+              pt' indentStr (T (n, cs):ts) = do
+                putStr indentStr
+                printNodeLn n
+                pt' (' ':indentStr) cs
+                pt' indentStr ts
+
+out :: [(Node, Int)] -> IO ()
+out []                 = return ()
+out ((node, level):ns) = do
+    indent level
+    printNodeLn node
+    out ns
+  where
+    indent :: Int -> IO ()
+    indent 0 = return ()
+    indent l = do putChar ' '
+                  indent (l-1)
+
+printNode :: Node -> IO ()
+printNode = putStr . show
+
+printNodeLn :: Node -> IO ()
+printNodeLn n = do
+    printNode n
+    putStrLn ""
 
 csvToNodeList :: CSV -> [Node]
 csvToNodeList = map recordToNode . initIf (==[""]) . tail
@@ -70,7 +91,10 @@ sortTree :: [Tree] -> [Tree]
 sortTree [] = []
 sortTree ts = sort cmp $ map sortChild ts
               where
+                cmp :: Tree -> Tree -> Bool
                 cmp (T (n1, _)) (T (n2, _)) = idx n1 < idx n2
+
+                sortChild :: Tree -> Tree
                 sortChild (T (n, cs)) = T (n, sortTree cs)
 
 sort :: (a -> a -> Bool) -> [a] -> [a]
@@ -85,7 +109,7 @@ sort f (x:xs) = insert x (sort f xs)
 flatten :: [Tree] -> [(Node, Int)]
 flatten t = f' t 0
             where
+              f' :: [Tree] -> Int -> [(Node, Int)]
               f' []             _ = []
               f' (T (n, cs):ts) d = (n, d):f' cs (d+1) ++ f' ts d
-
 
