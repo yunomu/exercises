@@ -1,12 +1,10 @@
+import Control.Applicative hiding (empty)
 import System.IO
 
 import Stack4
 
 ope :: Stack Int -> (Int -> Int -> Int) -> StackResult Int
-ope s f = evalStack s $ do
-    v1 <- pop
-    v2 <- pop
-    push $ f v1 v2
+ope s f = evalStack s $ push <$> (f <$> pop <*> pop)
 
 calcError :: (String, Stack Int) -> IO ()
 calcError (msg, stack) = do
@@ -21,7 +19,7 @@ display s = either calcError display' $ peek' s
         putValLn $ head v
         input s
 
-    peek' s = evalStack s peek
+    peek' stack = evalStack stack peek
 
 putValLn :: Show a => a -> IO ()
 putValLn = putStrLn . show

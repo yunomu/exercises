@@ -9,7 +9,7 @@ module Stack4
     ) where
 
 import Control.Monad.State
---import Safe
+import Safe
 
 type Stack a = [a]
 type StackResult a = Either (String, Stack a) (Stack a)
@@ -38,8 +38,4 @@ evalStack = flip execStateT
 
 empty :: Stack a
 empty = []
-
-headMay :: [a] -> Maybe a
-headMay []    = Nothing
-headMay (a:_) = Just a
 
