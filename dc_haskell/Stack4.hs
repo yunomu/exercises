@@ -13,7 +13,7 @@ import Safe
 
 type Stack a = [a]
 type StackResult a = Either (String, Stack a) (Stack a)
-type StackT a r = StateT (Stack a) (Either (String, Stack a)) r
+type StackT a = StateT (Stack a) (Either (String, Stack a))
 
 push :: a -> StackT a ()
 push a = do
@@ -33,8 +33,8 @@ peek = do
     st <- get
     maybe (lift $ Left ("stack empty", st)) return $ headMay st
 
-evalStack :: Stack a -> StackT a b -> StackResult a
-evalStack = flip execStateT
+evalStack :: StackT a b -> Stack a -> StackResult a
+evalStack = execStateT
 
 empty :: Stack a
 empty = []

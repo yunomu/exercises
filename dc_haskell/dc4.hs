@@ -3,8 +3,8 @@ import System.IO
 
 import Stack4
 
-ope :: Stack Int -> (Int -> Int -> Int) -> StackResult Int
-ope s f = evalStack s $ push <$> (f <$> pop <*> pop)
+ope :: (Int -> Int -> Int) -> Stack Int -> StackResult Int
+ope f = evalStack $ push <$> (f <$> pop <*> pop)
 
 calcError :: (String, Stack Int) -> IO ()
 calcError (msg, stack) = do
@@ -15,20 +15,19 @@ calcError (msg, stack) = do
 display :: Stack Int -> IO ()
 display s = either calcError display' $ peek' s
   where
+    display' :: Show a => Stack a -> IO ()
     display' v = do
-        putValLn $ head v
+        print $ head v
         input s
 
-    peek' stack = evalStack stack peek
-
-putValLn :: Show a => a -> IO ()
-putValLn = putStrLn . show
+    peek' :: Stack a -> StackResult a
+    peek' = evalStack peek
 
 quit :: IO ()
 quit = putStrLn "bye v(^n^)v"
 
 calc :: Stack Int -> (Int -> Int -> Int) -> IO ()
-calc s f = either calcError input $ ope s f
+calc s f = either calcError input $ ope f s
 
 clear :: IO ()
 clear = do
@@ -36,7 +35,7 @@ clear = do
     input empty
 
 store :: Stack Int -> String -> IO ()
-store s xs = either calcError input $ evalStack s (push $ read xs)
+store s xs = either calcError input $ evalStack (push $ read xs) s
 
 proc :: Stack Int -> String -> IO ()
 proc s xs
