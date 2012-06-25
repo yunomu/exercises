@@ -8,30 +8,27 @@ module Stack4
     , empty
     ) where
 
+import Control.Applicative hiding (empty)
 import Control.Monad.State
-import Safe
 
 type Stack a = [a]
-type StackResult a = Either (String, Stack a) (Stack a)
-type StackT a = StateT (Stack a) (Either (String, Stack a))
+type StackResult a = Either String (Stack a)
+type StackT a = StateT (Stack a) (Either String)
 
 push :: a -> StackT a ()
-push a = do
-    st <- get
-    put (a:st)
+push a = get >>= \as -> put (a:as)
 
 pop :: StackT a a
-pop = do
-    st <- get
-    maybe (lift $ Left ("stack empty", st)) (\v -> do
-        put $ tail st
-        return v
-      ) $ headMay st
+pop = get >>= f
+  where
+    f []     = lift $ Left "stack empty"
+    f (a:as) = put as >> return a
 
 peek :: StackT a a
-peek = do
-    st <- get
-    maybe (lift $ Left ("stack empty", st)) return $ headMay st
+peek = get >>= f
+  where
+    f []    = lift $ Left "stack empty"
+    f (a:_) = return a
 
 evalStack :: StackT a b -> Stack a -> StackResult a
 evalStack = execStateT
