@@ -10,5 +10,5 @@ do
             (varP $ mkName $ "curry" ++ show n)
             (normalB $ ncurry n)
             []
-    mapM mkCurry [2..27]
+    mapM mkCurry [2..62]
 
