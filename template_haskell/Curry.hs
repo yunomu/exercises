@@ -1,3 +1,4 @@
+{-# LANGUAGE TemplateHaskell #-}
 module Curry where
 
 import Language.Haskell.TH
