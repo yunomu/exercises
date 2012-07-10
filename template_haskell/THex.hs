@@ -51,3 +51,13 @@ nuncurry n = do
     let expr = foldl appE (varE func) $ map varE vars
     lamE pat expr
 
+ncurry' :: Int -> DecQ
+ncurry' n = do
+    let fname = mkName $ "curry" ++ show n
+    vars <- replicateM n $ newName "x"
+    let pat = map varP $ fname:vars
+    let tup = tupE $ map varE vars
+    let body = normalB $ appE (varE fname) tup
+    let fclauses = clause pat body []:[]
+    funD fname fclauses
+
