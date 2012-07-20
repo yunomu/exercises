@@ -6,7 +6,6 @@ import Control.Concurrent
 import qualified Control.Exception.Lifted as E
 import Control.Failure
 import Control.Monad.IO.Class
-import Control.Monad.Trans.Class
 import Control.Monad.Trans.Control
 import Control.Monad.Trans.Resource
 import Data.Attoparsec.ByteString
@@ -15,10 +14,7 @@ import Data.ByteString
 import qualified Data.ByteString.Char8 as BC
 import Data.Conduit
 import Data.Conduit.Attoparsec
-import qualified Data.Conduit.Binary as CB
 import Network.HTTP.Conduit
-
-import Debug.Trace
 
 curl :: (MonadUnsafeIO m,
          MonadThrow m,
@@ -31,18 +27,17 @@ curl url = do
     withManager $ \manager ->
         responseBody <$> http request manager
 
-takeDigits :: (Monad m, MonadThrow m) => GLSink ByteString m ByteString
-takeDigits = sinkParser field
-
-field :: Parser ByteString
-field = AC.takeWhile (/= ',') <* AC.anyChar
+takeField :: (Monad m, MonadThrow m) => GLSink ByteString m ByteString
+takeField = sinkParser field
+  where
+    field :: Parser ByteString
+    field = AC.takeWhile (/= ',') <* AC.anyChar
 
 getIntList :: (MonadBaseControl IO m, MonadThrow m) =>
     ResumableSource m ByteString ->
     m [Int]
 getIntList src = E.handle handler $ do
---getIntList src = do
-    (src1, str1) <- src $$++ takeDigits
+    (src1, str1) <- src $$++ takeField
     let v = read $ BC.unpack str1
     if v < 10
       then getIntList src1
@@ -54,7 +49,7 @@ getIntList src = E.handle handler $ do
 printList :: (MonadIO m, MonadBaseControl IO m, MonadThrow m) =>
     ResumableSource m ByteString -> m ()
 printList src = E.handle handler $ do
-    (src1, str1) <- src $$++ takeDigits
+    (src1, str1) <- src $$++ takeField
     liftIO $ forkIO $ BC.putStrLn str1
     printList src1
   where
@@ -64,7 +59,5 @@ printList src = E.handle handler $ do
 main :: IO ()
 main = runResourceT $ do
     src0 <- liftIO $ curl "http://localhost:8080/"
---    ss <- getIntList src0
---    liftIO $ print ss
     printList src0
 
