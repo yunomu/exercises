@@ -4,7 +4,6 @@ module Main where
 import Control.Applicative
 import Control.Concurrent
 import qualified Control.Exception.Lifted as E
-import Control.Failure
 import Control.Monad.IO.Class
 import Control.Monad.Trans.Control
 import Control.Monad.Trans.Resource
@@ -16,16 +15,12 @@ import Data.Conduit
 import Data.Conduit.Attoparsec
 import Network.HTTP.Conduit
 
-curl :: (MonadUnsafeIO m,
-         MonadThrow m,
-         MonadIO m,
-         MonadBaseControl IO m,
-         Failure HttpException m) =>
-    String -> m (ResumableSource (ResourceT m) ByteString)
+curl :: (MonadBaseControl IO m, MonadResource m) =>
+    String -> m (ResumableSource m ByteString)
 curl url = do
-    request <- parseUrl url
-    withManager $ \manager ->
-        responseBody <$> http request manager
+    request <- liftIO $ parseUrl url
+    manager <- liftIO $ newManager def
+    responseBody <$> http request manager
 
 takeField :: (Monad m, MonadThrow m) => GLSink ByteString m ByteString
 takeField = sinkParser field
@@ -58,6 +53,6 @@ printList src = E.handle handler $ do
 
 main :: IO ()
 main = runResourceT $ do
-    src0 <- liftIO $ curl "http://localhost:8080/"
+    src0 <- curl "http://localhost:8080/"
     printList src0
 
