@@ -10,7 +10,7 @@ ${TARGET}: ${OBJS}
 	gcc -o ${TARGET} -shared ${OBJS}
 
 .c.o: .depend
-	gcc -c $<
+	gcc -c -fPIC $<
 
 -include .depend
 
