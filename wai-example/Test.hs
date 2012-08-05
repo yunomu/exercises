@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import Network.Wai
-import Network.Wai.Handler.Warp
 import Network.Wai.Test
 import Network.HTTP.Types
 import Blaze.ByteString.Builder.Char.Utf8
@@ -10,12 +9,12 @@ server :: Application
 server _ = return $ ResponseBuilder status200 [] $ fromString "hello"
 
 middleware :: Middleware
-middleware app request = do
-    if requestMethod request == "MOGE"
+middleware app req = do
+    if requestMethod req == "MOGE"
       then return $ ResponseBuilder status200 [] $ fromString res
-      else app request
+      else app req
   where
-    res = show $ pathInfo request
+    res = show $ pathInfo req
 
 main :: IO ()
 main = do
