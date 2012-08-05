@@ -2,7 +2,6 @@
 
 import Network.Wai
 import Network.Wai.Handler.Warp
-import Network.Wai.Test
 import Network.HTTP.Types
 import Blaze.ByteString.Builder.Char.Utf8
 
@@ -18,8 +17,5 @@ middleware app request = do
     res = show $ pathInfo request
 
 main :: IO ()
-main = do
-    let req = request defaultRequest {requestMethod = "MOGE"}
-    res <- runSession req $ middleware server
-    print res
+main = run 8080 $ middleware server
 
