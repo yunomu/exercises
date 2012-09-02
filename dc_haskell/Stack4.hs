@@ -17,20 +17,22 @@ type StackResult a = Either String (Stack a)
 type StackT a = StateT (Stack a) (Either String)
 
 push :: a -> StackT a ()
-push a = get >>= \as -> put (a:as)
+push a = put =<< (:) a <$> get
 
 pop :: StackT a a
 pop = do
     as <- get
-    a <- lift $ headEither "stack empty" as
-    put $ tail as
-    return a
+    lift (tailEither "stack empty" as) >>= put
+    return $ head as
 
 peek :: StackT a a
 peek = get >>= lift . headEither "stack empty"
 
 headEither :: a -> [b] -> Either a b
 headEither a = maybe (Left a) Right . headMay
+
+tailEither :: a -> [b] -> Either a [b]
+tailEither a = maybe (Left a) Right . tailMay
 
 evalStack :: StackT a b -> Stack a -> StackResult a
 evalStack = execStateT
