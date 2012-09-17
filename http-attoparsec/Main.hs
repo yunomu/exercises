@@ -12,6 +12,7 @@ import qualified Data.Attoparsec.ByteString.Char8 as AC
 import Data.ByteString
 import qualified Data.ByteString.Char8 as BC
 import Data.Conduit
+import qualified Data.Conduit.Binary as CB
 import Data.Conduit.Attoparsec
 import Network.HTTP.Conduit
 
@@ -41,18 +42,19 @@ getIntList src = E.handle handler $ do
     handler :: (MonadBaseControl IO m) => ParseError -> m [a]
     handler _ = return []
 
-printList :: (MonadIO m, MonadBaseControl IO m, MonadThrow m) =>
-    ResumableSource m ByteString -> m ()
-printList src = E.handle handler $ do
-    (src1, str1) <- src $$++ takeField
+printList :: (MonadBaseControl IO m, MonadResource m)
+    => Sink ByteString m ()
+printList = do
+    str1 <- takeField
     liftIO $ forkIO $ BC.putStrLn str1
-    printList src1
-  where
-    handler :: (MonadBaseControl IO m) => ParseError -> m ()
-    handler _ = return ()
+    printList
+
+ignore :: (MonadBaseControl IO m) => ParseError -> m ()
+ignore _ = return ()
 
 main :: IO ()
 main = runResourceT $ do
-    src0 <- curl "http://localhost:8080/"
-    printList src0
+--    src0 <- curl "http://localhost:8080/"
+--    printList src0
+    E.handle ignore $ CB.sourceFile "index.html" $$ printList
 

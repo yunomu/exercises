@@ -1,0 +1,32 @@
+Name:                http-attoparsec
+Version:             0.1
+Synopsis:            Exercises, HTTP, Attoparsec
+-- Description:         
+Homepage:            https://github.com/yunomu/exercises/tree/master/http-attoparsec
+License:             BSD3
+License-file:        LICENSE
+Author:              Yusuke Nomura
+Maintainer:          yunomu@gmail.com
+-- Copyright:           
+Category:            Exercises
+Build-type:          Simple
+-- Extra-source-files:  
+Cabal-version:       >=1.2
+
+Executable http-attoparsec
+  Main-is:           Main.hs
+  Build-depends:     base
+                   , bytestring
+                   , conduit >= 0.5
+                   , http-conduit
+                   , attoparsec
+                   , attoparsec-conduit
+                   , resourcet
+                   , monad-control
+                   , transformers
+                   , lifted-base
+
+  -- Other-modules:       
+
+  -- Build-tools:         
+  
