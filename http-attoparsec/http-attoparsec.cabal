@@ -25,6 +25,7 @@ Executable http-attoparsec
                    , monad-control
                    , transformers
                    , lifted-base
+                   , concurrent-extra
 
   -- Other-modules:       
 
