@@ -1,0 +1,156 @@
+コマンドライン引数のパースがだいたいどう転んでも面倒くさい。特にCとかJavaとかは本当に泣きたくなりますよね。まあJavaでコマンドラインのプログラムを書く事なんてあんまし無いかもしれませんけど。いや、ありますけど。泣きながら書いてました。
+
+Haskellでもまあ別に普通に面倒くさいんですけど、いくつかライブラリがあって、その中で一番目についたというか使いやすそうだったライブラリがcmdargsでした。
+
+使い方。
+>|haskell|
+{-# LANGUAGE DeriveDataTypeable #-}
+module Main where
+
+import System.Console.CmdArgs
+
+data Option = Option
+    { label :: String
+    , size :: Int
+    } deriving (Show, Data, Typeable)
+
+option :: Option
+option = Option
+    { label = "no label"
+    , size = 0
+    }
+
+main :: IO ()
+main = do
+	opt <- cmdArgs option
+	print opt
+||<
+とりあえずサンプルそのまんまです。
+
+これだけでも最低限の機能は持っていて、実行するとこうなる。
+>||
+% runghc Main
+Option {label = "no label", size = 0}
+||<
+これはコマンドライン引数を何も指定していないので、optionで定義したデフォルト値がそのまま返ってきている。
+
+引数を指定するとこうなる。
+>||
+% runghc Main --label kirari --size 186
+Option {label = "kirari", size = 186}
+||<
+デフォルトではラベルの名前がそのまま引数の名前になります。
+
+それとこの時点で--helpと--versionは実装されています。
+>||
+% runghc Main --version
+The option program
+% runghc Main --help
+The option program
+
+option [OPTIONS]
+
+Common flags:
+  -l --label=ITEM
+  -s --size=INT  
+  -? --help        Display help message
+  -V --version     Print version information
+||<
+Intの変換は勝手にやってくれるので、それはちょっと楽です。
+
+で、カスタマイズ。
+多くの場合ではOptionのラベル名をそのまま引数の名前として使われると面倒くさいんじゃないかと思います。例えばOptionの定義がこんな場合。
+>|haskell|
+data Option = Option
+	{ optLabel :: String
+	, optSize :: Int
+	} deriving (Show, Data, Typeable)
+||<
+この場合はオプションがこんなになってしまいます。
+>||
+% runghc Main --help
+{略}
+Common flags:
+	--optlabel=ITEM
+	--optsize=Int
+||<
+面倒くさいし、ショートオプションなくなってるし。
+あ、このライブラリではショートオプションはロングの最初の文字から取られるようです。
+
+で、この時にどうするかというと、デフォルト値にアノテーションを付けて、それをcmdArgsが解釈することでなんかうまくいくみたいです。
+コードにするとこんな感じ。option関数のみ。
+>|haskell|
+option :: Option
+option = Option
+	{ optLabel = "no label" &= name "label"
+	, optSize = 0 &= name "size"
+	}
+||<
+仕組みは全くわかりませんが、これでうまくいく。
+>||
+% runghc Main --help
+{略}
+Common flags:
+  -l --label=ITEM --optlabel
+  -s --size=INT --optsize   
+||<
+元の引数名を完全に消したいならexplicitをつける。
+>|haskell|
+option :: Option
+option = Option
+	{ optLabel = "no label" &= name "label" &= explicit
+	, optSize = 0 &= name "size" &= explicit
+	}
+||<
+ヘルプを書きたいならさらにhelpを足す。
+>|haskell|
+option :: Option
+option = Option
+	{ optLabel = "no label"
+	  &= name "label"
+	  &= explicit
+	  &= help "Name of label"
+	, optSize = 0
+	  &= name "size"
+	  &= explicit
+	  &= help "Size of struct"
+	}
+||<
+全体の説明を書きたいならOptionにsummaryをつける。
+>|haskell|
+option :: Option
+option = Option
+	{ optLabel = "no label"
+	  &= name "label"
+	  &= explicit
+	  &= help "Name of label"
+	, optSize = 0
+	  &= name "size"
+	  &= explicit
+	  &= help "Size of struct"
+	}
+	&= summary "CmdArgs sample"
+||<
+実行例のプログラム名を変更したいならprogramで指定する。
+>|haskell|
+option :: Option
+option = Option
+	{ optLabel = "no label"
+	  &= name "label"
+	  &= explicit
+	  &= help "Name of label"
+	, optSize = 0
+	  &= name "size"
+	  &= explicit
+	  &= help "Size of struct"
+	}
+	&= summary "CmdArgs sample"
+	&= program "cmdargs"
+||<
+
+という感じで、要素を付け足したりしていけばいいみたいです。
+
+今のところByteStringやBoolには対応してないっぽいです。
+
+あと気になるのは、requiredな引数を作りたい時になんか楽にやれないのかということ。
+一応、Maybe Intとかの型にしておいてもIntと同じように読んでくれたりするので、requiredなオプションはMaybe値にしておいて、自分でチェックすれば良さそうです。というかこのMaybe対応は地味にすごい気がします。
