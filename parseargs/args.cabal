@@ -1,0 +1,19 @@
+name:                args
+version:             0.1.0.0
+-- synopsis:            
+-- description:         
+license:             BSD3
+author:              Yusuke Nomura
+maintainer:          nomura_y@worksap.co.jp
+-- copyright:           
+category:            Sample
+build-type:          Simple
+cabal-version:       >=1.8
+
+executable args
+  main-is:             Main.hs
+  other-modules:       
+  ghc-options:         -Wall
+                       -fno-warn-unused-do-bind
+  build-depends:       base ==4.5.*
+                     , parseargs
