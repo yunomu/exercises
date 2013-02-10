@@ -1,0 +1,19 @@
+name:                logger
+version:             0.1.0.0
+-- synopsis:            
+-- description:         
+-- license:             
+-- license-file:        LICENSE
+author:              Yusuke Nomura
+maintainer:          yunomu@gmail.com
+-- copyright:           
+-- category:            
+build-type:          Simple
+cabal-version:       >=1.8
+
+executable logger
+  main-is:             Main.hs
+  -- other-modules:       
+  extensions:          OverloadedStrings
+  build-depends:       base ==4.5.*
+                     , hslogger
