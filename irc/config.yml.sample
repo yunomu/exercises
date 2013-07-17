@@ -1,0 +1,7 @@
+server: "irc.ircnet.ne.jp"
+port: 6667
+channels:
+ - "#otonoki"
+nick: "Elichka"
+realname: "EliAyase"
+password: "pepepepepe"
