@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell, OverloadedStrings #-}
 module Main where
 
 import Control.Lens
@@ -13,6 +13,9 @@ data Music = Music
     }
   deriving (Show)
 makeLenses ''Music
+
+upd :: a -> ASetter a b c d -> d -> b
+upd rec field value = rec&field .~ value
 
 main :: IO ()
 main = do
