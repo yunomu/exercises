@@ -1,6 +1,6 @@
 module Main where
 
-infixr 1 <->
+infixr 9 <->
 
 (<->) :: Num a => a -> a -> a
 a <-> b = a - b
