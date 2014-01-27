@@ -19,29 +19,10 @@ executable hrr-test
   main-is:             Main.hs
   other-modules:       DataSource, Tables
   other-extensions:    OverloadedStrings
---                     , FlexibleContexts
---                     , FlexibleInstances
---                     , MultiParamTypeClasses
---                     , TemplateHaskell
---                     , UndecidableInstances
---                     , EmptyDataDecls
---                     , GeneralizedNewtypeDeriving
---                     , ExistentialQuantification
---                     , TypeSynonymInstances
---                     , Rank2Types
---                     , MonadComprehensions
   build-depends:       base >=4.6 && <4.7
---                     , array >=0.4 && <0.5
---                     , containers >=0.5 && <0.6
---                     , template-haskell >=2.8 && <2.9
---                     , time >=1.4 && <1.5
---                     , Cabal >=1.18 && <1.19
---                     , transformers >=0.3 && <0.4
---                     , bytestring >=0.10 && <0.11
---                     , text >=0.11 && <0.12
---                     , old-locale >=1.0 && <1.1
---                     , dlist >=0.5 && <0.6
+                     , template-haskell
                      , HDBC-mysql
+                     , HDBC-postgresql
                      , names-th
                      , sql-words
                      , persistable-record
