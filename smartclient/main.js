@@ -7,6 +7,7 @@ var button = isc.Button.create({
         isc.say('Hello World');
     }
 });
+
 var button2 = isc.Button.create({
     top: 250,
     left: 20,
@@ -15,4 +16,18 @@ var button2 = isc.Button.create({
     doubleClick: function() {
         isc.say('Hello World');
     }
+});
+
+var grid = isc.TreeGrid.create({
+    top: 20,
+    left: 200,
+    width: 500,
+    height: 300,
+    canReorderRecords: true,
+    fields: [
+        {name: "Task"},
+        {name: "Due"},
+        {name: "Created"},
+        {name: "Updated"}
+    ]
 });
