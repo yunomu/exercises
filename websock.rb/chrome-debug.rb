@@ -11,7 +11,7 @@ def pagelist(host = "localhost", port = 9222)
   }
 end
 
-w = pagelist.find {|e| e["title"].include? "frames" }
+w = pagelist.find {|e| e["title"].include? "GitHub" }
 puts w
 
 MAX = 2**64
@@ -34,13 +34,7 @@ end
 
 ws = WebSocket::Client::Simple.connect debugUrl
 
-class Emitter
-  def send(data)
-    emit(data)
-  end
-end
-emitter = Emitter.new
-stream = Frappuccino::Stream.new(emitter)
+stream = Frappuccino::Stream.new
 
 # debug
 #stream.on_value do |v|
@@ -57,7 +51,7 @@ stream
 
 ws.on :message do |msg|
   data = JSON.parse(msg.data)
-  emitter.send(data)
+  stream.update(data)
 end
 
 ws.on :open do
