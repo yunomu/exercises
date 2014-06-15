@@ -16,15 +16,17 @@ executable mecab-test
   -- other-modules:       
   ghc-options:         -Wall
                        -fno-warn-unused-do-bind
-  build-depends:       base ==4.5.*
+  extra-lib-dirs:      /usr/local/opt/mecab/lib
+  extra-libraries:     mecab
+  build-depends:       base ==4.*
                      , mecab
                      , text
                      , bytestring
 
-executable gen
-  main-is:             CSV.hs
-  ghc-options:         -Wall
-                       -fno-warn-unused-do-bind
-  build-depends:       base ==4.5.*
-                     , csv-conduit
-                     , conduit
+--executable gen
+--  main-is:             CSV.hs
+--  ghc-options:         -Wall
+--                       -fno-warn-unused-do-bind
+--  build-depends:       base ==4.*
+--                     , csv-conduit
+--                     , conduit

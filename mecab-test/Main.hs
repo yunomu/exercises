@@ -13,10 +13,10 @@ main = do
     mecab <- new2 "mecab"
     parse mecab t >>= T.putStrLn
     getTheta mecab >>= print
-    nodes <- parseToNode mecab t
+    nodes <- parseToNodes mecab t
     mapM print nodes
     print $ length nodes
-    next mecab >>= T.putStrLn . fromMaybe "(Nothing)"
+    nBestNext mecab >>= T.putStrLn . fromMaybe "(Nothing)"
   where
     t :: Text
     t = "明日は晴れるでしょう"
