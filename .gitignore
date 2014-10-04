@@ -1,3 +1,5 @@
 *.hi
 *.o
 *.beam
+/Test/nbproject/private/
+/Test/build/
