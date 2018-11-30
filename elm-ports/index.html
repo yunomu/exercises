@@ -1,0 +1,13 @@
+<html>
+	<body>
+		<div id="main"></div>
+		<script src="elm.js"></script>
+		<script>
+var app = Elm.Main.init({node: document.getElementById("main")});
+app.ports.alert.subscribe(function(txt) {
+	console.log(txt);
+	app.ports.getVal.send("getVal");
+});
+		</script>
+	</body>
+</html>
