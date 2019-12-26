@@ -131,9 +131,10 @@ func (p *Parser) Parse() error {
 			}
 
 			bs := v.Value.([]byte)
+			log.Println("length-delimited(string|packed repeated):", bs, string(bs))
 			p1 := NewParser(bytes.NewReader(bs))
 			if err := p1.Parse(); err != nil {
-				log.Println("length-delimited(string|packed repeated):", bs, string(bs))
+				log.Println("parse", err)
 			}
 		case 3:
 			// start group (deprecated)
