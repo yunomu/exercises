@@ -6,4 +6,5 @@ message Person {
   string name = 1;
   int32 age = 2;
   repeated int32 children = 3;
+  string note = 128;
 }

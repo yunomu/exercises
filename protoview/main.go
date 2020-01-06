@@ -99,15 +99,14 @@ func (p *Parser) bit32(tag int) (*Field, error) {
 
 func (p *Parser) Parse() error {
 	for {
-		b, err := p.r.ReadByte()
-		if err == io.EOF {
-			return nil
-		} else if err != nil {
+		f, err := p.varint(0)
+		if err != nil {
 			return err
 		}
+		h := f.Value.(int64)
 
-		wireType := b & 0x3
-		field := int(b >> 3)
+		wireType := h & 0x3
+		field := int(h >> 3)
 
 		switch wireType {
 		case 0:
