@@ -32,7 +32,10 @@ var suffixRule map[string]string
 func init() {
 	suffixRule = make(map[string]string)
 	suffixRule[".html"] = "text/html"
+	suffixRule[".png"] = "image/png"
+	suffixRule[".css"] = "text/css"
 	suffixRule[".wasm"] = "application/wasm"
+	suffixRule[".ico"] = "image/vnd.microsoft.icon"
 }
 
 type handler struct {
